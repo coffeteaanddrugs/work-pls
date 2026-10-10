@@ -58,7 +58,8 @@ public final class PhoneVoiceAddon implements AddonInitializer {
 				1000
 		).build();
 
-		activation.onPlayerActivationStart(player -> ServerActivation.Result.HANDLED);
+		activation.onPlayerActivationStart(player -> {
+		});
 
 		activation.onPlayerActivation((player, packet) -> {
 			ServerDirectSource source = sourceFor(player);
@@ -89,7 +90,10 @@ public final class PhoneVoiceAddon implements AddonInitializer {
 
 	/** Fuente de audio del interlocutor del jugador que está hablando (la crea la primera vez). */
 	private ServerDirectSource sourceFor(VoicePlayer speaker) {
-		UUID speakerId = speaker.getInstance().getUUID();
+		UUID speakerId = idOf(speaker);
+		if (speakerId == null) {
+			return null;
+		}
 		UUID listenerId = partners.get(speakerId);
 		if (listenerId == null) {
 			return null;
@@ -105,6 +109,17 @@ public final class PhoneVoiceAddon implements AddonInitializer {
 		ServerDirectSource created = line.createDirectSource(listener, false);
 		sources.put(listenerId, created);
 		return created;
+	}
+
+	/** Averigua el UUID del jugador que habla comparándolo con los jugadores que están en llamada. */
+	private UUID idOf(VoicePlayer speaker) {
+		for (UUID id : partners.keySet()) {
+			VoicePlayer p = voiceServer.getPlayerManager().getPlayerById(id).orElse(null);
+			if (p != null && (p == speaker || p.equals(speaker) || p.getInstance().equals(speaker.getInstance()))) {
+				return id;
+			}
+		}
+		return null;
 	}
 
 	public static void startCall(UUID a, UUID b) {
