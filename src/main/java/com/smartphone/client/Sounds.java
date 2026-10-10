@@ -16,11 +16,11 @@ public final class Sounds {
 		if (v <= 0f) {
 			return;
 		}
-		MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(sound, pitch, v));
+		MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(sound.value(), pitch, v));
 	}
 
 	public static void click() {
-		MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0f, 0.5f));
+		MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(), 1.0f, 0.5f));
 	}
 
 	public static void message() {
